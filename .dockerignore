@@ -1,0 +1,7 @@
+__pycache__
+.env
+Dockerfile
+docker-compose.yaml
+nginx_conf
+sqlite_data.json
+debug.json

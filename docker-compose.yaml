@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:12
+    container_name: db
+    env_file: .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: web
+    command: gunicorn api_yamdb.wsgi:application --bind 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file: .env
+    volumes:
+      - static:/code/static
+
+  nginx:
+    image: nginx:1.23.4
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    volumes:
+      - static:/src/static
+      - media:/src/media
+      - ./nginx_conf:/etc/nginx/conf.d/default.conf
+      - ./favicon.ico:/usr/share/nginx/html/favicon.ico:ro
+
+volumes:
+  postgres_data:
+  static:
+  media:
